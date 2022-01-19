@@ -2,17 +2,14 @@ import { FC, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import { FaTrash, FaPen } from "react-icons/fa";
 import styled from "styled-components";
+import { IPricelist } from "interfaces/pricelist.interface";
 
 interface IMembersTableRow {
-  _id: string;
-  name: string;
-  length: number;
-  cost: number;
-  onEdit: (id: string) => void;
+  onEdit: (item: IPricelist) => void;
   onDelete: (id: string, callback: Function) => void;
 }
 
-const PricelistTableRow: FC<IMembersTableRow> = (props) => {
+const PricelistTableRow: FC<IMembersTableRow & IPricelist> = (props) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = () => {
@@ -36,7 +33,7 @@ const PricelistTableRow: FC<IMembersTableRow> = (props) => {
       ) : (
         <>
           <TableAction>
-            <TableLink onClick={() => props.onEdit(props._id)}>
+            <TableLink onClick={() => props.onEdit(props)}>
               <FaPen />
             </TableLink>
           </TableAction>

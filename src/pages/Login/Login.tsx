@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
@@ -10,15 +11,6 @@ import * as Yup from "yup";
 
 import { useUserActions } from "hooks/useUserActions";
 
-import {
-  LoginWrapper,
-  LoginIntro,
-  IntroH1,
-  IntroH5,
-  LoginForm,
-  LoginButton,
-} from "./Login.styled";
-
 const Login = () => {
   const { login, error, setError } = useUserActions();
   const [loading, setLoading] = useState(false);
@@ -26,8 +18,8 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
-      password: "",
+      username: "Dzzo",
+      password: "lozinka123",
     },
     validationSchema: Yup.object({
       username: Yup.string().required(),
@@ -63,6 +55,7 @@ const Login = () => {
               type="text"
               name="username"
               placeholder="Username"
+              value={formik.values.username}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.username && formik.touched.username}
@@ -77,6 +70,7 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Password"
+              value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.password && formik.touched.password}
@@ -115,3 +109,69 @@ const Login = () => {
 };
 
 export default Login;
+
+const LoginWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+
+  @media (max-width: 940px) {
+    flex-direction: column;
+  }
+`;
+
+const LoginIntro = styled.section`
+  padding: 20px;
+  width: 100%;
+
+  @media (max-width: 940px) {
+    text-align: center;
+  }
+`;
+
+const IntroH1 = styled.h1`
+  margin: 10px 0;
+  line-height: 1.25;
+  font-size: 2rem;
+
+  @media (max-width: 500px) {
+    line-height: 1;
+    font-size: 1.75rem;
+  }
+`;
+
+const IntroH5 = styled.h5`
+  margin-top: 10px;
+  margin-bottom: 30px;
+  font-size: 1rem;
+`;
+
+const LoginForm = styled.div`
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  & > form {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 10px 5px #00000025;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 500px;
+
+    Button {
+      margin-top: 10px;
+      width: 100%;
+    }
+  }
+`;
+
+const LoginButton = styled(Button)`
+  padding: 15px 40px;
+  text-transform: uppercase;
+`;
