@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { Card, Container, Row, Col } from "react-bootstrap";
+import { Card, Container, Row, Col, Spinner } from "react-bootstrap";
 import {
   FaInfoCircle,
   FaPhone,
@@ -13,35 +13,90 @@ import {
 
 import Box from "components/Box";
 import useMembersActions from "hooks/useMembersActions";
+import usePricelistActions from "hooks/usePricelistActions";
 import { defaultMember, IMemberDetails } from "interfaces/member.interface";
 import Membership from "./Membership";
+import EditMemberModal from "./EditMemberModal";
+import NewPaymentModal from "./NewPaymentModal";
+import NewMembershipModal from "./NewMembershipModal";
+import { IPricelist } from "interfaces/pricelist.interface";
+
+interface IModalState {
+  showEditMember: boolean;
+  showNewMembership: boolean;
+  showNewPayment: boolean;
+}
+
+const defaultModalState = {
+  showEditMember: false,
+  showNewMembership: false,
+  showNewPayment: false,
+};
+
+type ActionType =
+  | "TOGGLE_EDIT_MEMBER"
+  | "TOGGLE_NEW_PAYMENT"
+  | "TOGGLE_NEW_MEMBERSHIP";
+
+const modalHandler = (
+  modalState: IModalState,
+  action: { type: ActionType }
+) => {
+  switch (action.type) {
+    case "TOGGLE_EDIT_MEMBER":
+      return {
+        ...modalState,
+        showEditMember: !modalState.showEditMember,
+      };
+    case "TOGGLE_NEW_PAYMENT":
+      return {
+        ...modalState,
+        showNewPayment: !modalState.showNewPayment,
+      };
+    case "TOGGLE_NEW_MEMBERSHIP":
+      return {
+        ...modalState,
+        showNewMembership: !modalState.showNewMembership,
+      };
+    default:
+      return modalState;
+  }
+};
 
 const Member = () => {
-  const [member, setMember] = useState<IMemberDetails>(defaultMember);
-  const [loading, setLoading] = useState(false);
   const { getMember } = useMembersActions();
+  const { getPricelist } = usePricelistActions();
+  const [member, setMember] = useState<IMemberDetails>(defaultMember);
+  const [pricelist, setPricelist] = useState<IPricelist[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [modalState, setModalState] = useReducer(
+    modalHandler,
+    defaultModalState
+  );
   const params = useParams();
 
   useEffect(() => {
     const memberId = params.id;
 
+    setLoading(true);
     if (memberId) {
-      getMember(memberId).then((res: any) => {
-        setMember(res.data);
-      });
+      Promise.all([getMember(memberId), getPricelist()])
+        .then((res: any[]) => {
+          setMember(res[0].data);
+          setPricelist(res[1].data);
+        })
+        .finally(() => setLoading(false));
     }
   }, []);
-
-  const handleEdit = () => {};
-
-  const handleNewMembership = () => {};
 
   return (
     <>
       <Card className="mb-4">
         <Card.Header>
           Member Info
-          <HeaderAction onClick={handleEdit}>
+          <HeaderAction
+            onClick={() => setModalState({ type: "TOGGLE_EDIT_MEMBER" })}
+          >
             <FaEdit /> Edit
           </HeaderAction>
         </Card.Header>
@@ -79,16 +134,42 @@ const Member = () => {
       <Card>
         <Card.Header>
           Memberships
-          <HeaderAction onClick={handleNewMembership}>
+          <HeaderAction
+            onClick={() => setModalState({ type: "TOGGLE_NEW_MEMBERSHIP" })}
+          >
             <FaPlusCircle /> New Membership
           </HeaderAction>
         </Card.Header>
         <Card.Body>
-          {member.memberships.map((membership) => (
-            <Membership key={membership._id} {...membership} />
-          ))}
+          {loading ? (
+            <SpinnerWrapper>
+              <Spinner animation="grow" />
+            </SpinnerWrapper>
+          ) : (
+            member.memberships.map((membership) => (
+              <Membership
+                key={membership._id}
+                {...membership}
+                showModal={() => setModalState({ type: "TOGGLE_NEW_PAYMENT" })}
+              />
+            ))
+          )}
         </Card.Body>
       </Card>
+      <EditMemberModal
+        {...member}
+        show={modalState.showEditMember}
+        onHide={() => setModalState({ type: "TOGGLE_EDIT_MEMBER" })}
+      />
+      <NewMembershipModal
+        pricelist={pricelist}
+        show={modalState.showNewMembership}
+        onHide={() => setModalState({ type: "TOGGLE_NEW_MEMBERSHIP" })}
+      />
+      <NewPaymentModal
+        show={modalState.showNewPayment}
+        onHide={() => setModalState({ type: "TOGGLE_NEW_PAYMENT" })}
+      />
     </>
   );
 };
@@ -111,4 +192,11 @@ const HeaderAction = styled.a`
     color: inherit;
     opacity: 0.7;
   }
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 50px 0;
 `;

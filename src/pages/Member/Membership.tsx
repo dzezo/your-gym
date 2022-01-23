@@ -4,60 +4,62 @@ import { FaTrash, FaTag, FaCalendar, FaExchangeAlt } from "react-icons/fa";
 import { Row, Col } from "react-bootstrap";
 
 import Box from "components/Box";
-import { IMembership } from "interfaces/member.interface";
 import { getDateString } from "helpers/utils";
+import { IMembership } from "interfaces/member.interface";
 
-const Membership: FC<IMembership> = (props) => {
+const Membership: FC<IMembership & { showModal: () => void }> = (props) => {
   const [showMore, setShowMore] = useState(false);
 
   return (
-    <MembershipWrapper>
-      <MembershipHeader>
-        <MembershipHeading onClick={() => setShowMore(!showMore)}>
-          {props.mName} | DAYS LEFT: {props.daysLeft} | DEBT: {props.debt}
-        </MembershipHeading>
-        <MembershipAction>
-          <span>Pay</span>
-          <FaTag />
-        </MembershipAction>
-        <MembershipAction className="danger">
-          <FaTrash />
-        </MembershipAction>
-      </MembershipHeader>
-      {showMore && (
-        <MembershipBody>
-          <Row>
-            <Col className="mb-3" md={6}>
-              <Box
-                icon={<FaExchangeAlt />}
-                value="Balance"
-                title={`Cost: ${props.cost} \nDebt: ${props.debt}`}
-              />
-            </Col>
-            <Col className="mb-3" md={6}>
-              <Box
-                icon={<FaCalendar />}
-                value="Date"
-                title={`Start: ${getDateString(
-                  props.start
-                )} \nEnd: ${getDateString(props.end)}`}
-              />
-            </Col>
-          </Row>
-          {props.log.map((payment) => (
-            <MembershipPayment key={payment._id}>
-              <PaymentData>
-                <div>Date: {getDateString(payment.date)}</div>
-                <div>Amount: {payment.amount}</div>
-              </PaymentData>
-              <PaymentAction>
-                <FaTrash />
-              </PaymentAction>
-            </MembershipPayment>
-          ))}
-        </MembershipBody>
-      )}
-    </MembershipWrapper>
+    <>
+      <MembershipWrapper>
+        <MembershipHeader>
+          <MembershipHeading onClick={() => setShowMore(!showMore)}>
+            {props.mName} | DAYS LEFT: {props.daysLeft} | DEBT: {props.debt}
+          </MembershipHeading>
+          <MembershipAction onClick={props.showModal}>
+            <span>Pay</span>
+            <FaTag />
+          </MembershipAction>
+          <MembershipAction className="danger">
+            <FaTrash />
+          </MembershipAction>
+        </MembershipHeader>
+        {showMore && (
+          <MembershipBody>
+            <Row>
+              <Col className="mb-3" md={6}>
+                <Box
+                  icon={<FaExchangeAlt />}
+                  value="Balance"
+                  title={`Cost: ${props.cost} \nDebt: ${props.debt}`}
+                />
+              </Col>
+              <Col className="mb-3" md={6}>
+                <Box
+                  icon={<FaCalendar />}
+                  value="Date"
+                  title={`Start: ${getDateString(
+                    props.start
+                  )} \nEnd: ${getDateString(props.end)}`}
+                />
+              </Col>
+            </Row>
+            {props.log.map((payment) => (
+              <MembershipPayment key={payment._id}>
+                <PaymentData>
+                  <div>Date: {getDateString(payment.date)}</div>
+                  <div>Amount: {payment.amount}</div>
+                </PaymentData>
+                <PaymentAction>
+                  <FaTrash />
+                </PaymentAction>
+              </MembershipPayment>
+            ))}
+          </MembershipBody>
+        )}
+      </MembershipWrapper>
+    </>
   );
 };
 

@@ -6,7 +6,7 @@ import PricelistTable from "./PricelistTable";
 import PricelistTableRow from "./PricelistTableRow";
 import PricelistModal, {
   PricelistModalType,
-} from "components/modals/PricelistModal";
+} from "pages/Pricelist/PricelistModal";
 
 const Pricelist = () => {
   const [loading, setLoading] = useState(false);

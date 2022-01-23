@@ -5,30 +5,21 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { IMemberDetails } from "interfaces/member.interface";
+import { IModalProps } from "interfaces/modal-props.interface";
 
-import { IPricelist } from "interfaces/pricelist.interface";
-
-export type PricelistModalType = "new" | "edit";
-
-export interface IPricelistModalProps {
-  show: boolean;
-  onHide: () => void;
-  type: PricelistModalType;
-  item?: IPricelist;
-}
-
-const PricelistModal: FC<IPricelistModalProps> = (props) => {
+const EditMemberModal: FC<IMemberDetails & IModalProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const formik = useFormik({
     initialValues: {
-      name: props.item?.name ?? "",
-      length: props.item?.length ?? 0,
-      cost: props.item?.cost ?? 0,
+      name: props.name ?? "",
+      phone: props.phone ?? "",
+      email: props.email ?? "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required(),
-      length: Yup.number().required(),
-      cost: Yup.number().required(),
+      phone: Yup.string().required(),
+      email: Yup.string().email().required(),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -36,14 +27,10 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
     enableReinitialize: true,
   });
 
-  console.log(formik.initialValues);
-
   return (
     <Modal show={props.show} onHide={props.onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>
-          {props.type === "new" ? "New Item" : "Edit Item"}
-        </Modal.Title>
+        <Modal.Title>Member Info</Modal.Title>
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
@@ -51,7 +38,7 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
             <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Membership Name"
+              placeholder="Full Name"
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
@@ -62,34 +49,34 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
               {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="mb-3" controlId="username">
-            <Form.Label>Length</Form.Label>
+          <Form.Group className="mb-3" controlId="phone">
+            <Form.Label>Phone</Form.Label>
             <Form.Control
-              type="number"
-              placeholder="Length In Days"
-              name="length"
-              value={formik.values.length}
+              type="text"
+              placeholder="Phone Number"
+              name="phone"
+              value={formik.values.phone}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.length && formik.touched.length}
+              isInvalid={!!formik.errors.phone && formik.touched.phone}
             ></Form.Control>
             <Form.Control.Feedback type="invalid">
-              {formik.errors.length}
+              {formik.errors.phone}
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Cost</Form.Label>
+            <Form.Label>E-mail</Form.Label>
             <Form.Control
-              type="number"
-              placeholder="Cost"
-              name="cost"
-              value={formik.values.cost}
+              type="email"
+              placeholder="E-mail"
+              name="email"
+              value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.cost && formik.touched.cost}
+              isInvalid={!!formik.errors.email && formik.touched.email}
             ></Form.Control>
             <Form.Control.Feedback type="invalid">
-              {formik.errors.cost}
+              {formik.errors.email}
             </Form.Control.Feedback>
           </Form.Group>
         </Modal.Body>
@@ -108,7 +95,7 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
                 className="me-1"
               />
             )}
-            {props.type === "new" ? "Submit Item" : "Submit Changes"}
+            Submit
           </Button>
         </Modal.Footer>
       </Form>
@@ -116,4 +103,4 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
   );
 };
 
-export default PricelistModal;
+export default EditMemberModal;

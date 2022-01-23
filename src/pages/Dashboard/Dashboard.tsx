@@ -3,12 +3,16 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import { FaUser, FaTimesCircle, FaMinus, FaCheckCircle } from "react-icons/fa";
+
+import useMembersActions from "hooks/useMembersActions";
+import usePricelistActions from "hooks/usePricelistActions";
 import { IMember } from "interfaces/member.interface";
-import { useMembersActions } from "hooks/useMembersActions";
+import { IPricelist } from "interfaces/pricelist.interface";
 
 import Box from "components/Box";
 import MembersTable from "components/MembersTable/MembersTable";
 import MembersTableRow from "components/MembersTable/MembersTableRow";
+import NewMemberModal from "components/MembersTable/NewMemberModal";
 
 interface DashboardStats {
   activeMembers: number;
@@ -24,27 +28,32 @@ const defaultDashboardStats: DashboardStats = {
 };
 
 const Dashboard = () => {
+  const { getDashboard, searchByName, deleteMember } = useMembersActions();
+  const { getPricelist } = usePricelistActions();
+
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<IMember[]>([]);
+  const [pricelist, setPricelist] = useState<IPricelist[]>([]);
   const [stats, setStats] = useState(defaultDashboardStats);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
-  const { getDashboard, searchByName, deleteMember } = useMembersActions();
 
   useEffect(() => {
     setLoading(true);
-    getDashboard()
-      .then((res: any) => {
-        const [activeMembers, stats] = res;
+    Promise.all([getDashboard(), getPricelist()])
+      .then((res: any[]) => {
+        const [activeMembers, stats] = res[0];
         setMembers(activeMembers.data);
         setStats(stats.data);
-        setLoading(false);
+
+        const pricelist = res[1];
+        setPricelist(pricelist.data);
       })
       .finally(() => setLoading(false));
   }, [getDashboard]);
 
   const handleAdd = () => {
-    console.log("adding member");
+    setShowModal(true);
   };
 
   const handleSearch = async (searchTerm: string) => {
@@ -126,6 +135,11 @@ const Dashboard = () => {
           )
         )}
       </MembersTable>
+      <NewMemberModal
+        pricelist={pricelist}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      />
     </>
   );
 };

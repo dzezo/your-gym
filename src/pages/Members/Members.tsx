@@ -1,21 +1,28 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMembersActions } from "hooks/useMembersActions";
+
+import useMembersActions from "hooks/useMembersActions";
+import usePricelistActions from "hooks/usePricelistActions";
 import { IMember } from "interfaces/member.interface";
+import { IPricelist } from "interfaces/pricelist.interface";
 
 import MembersTable from "components/MembersTable/MembersTable";
 import MembersTableRow from "components/MembersTable/MembersTableRow";
+import NewMemberModal from "components/MembersTable/NewMemberModal";
 
 const Members = () => {
+  const { getMembers, searchByName, deleteMember } = useMembersActions();
+  const { getPricelist } = usePricelistActions();
+
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<IMember[]>([]);
+  const [pricelist, setPricelist] = useState<IPricelist[]>([]);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const { getMembers, searchByName, deleteMember } = useMembersActions();
-
   const handleAdd = () => {
-    console.log("adding member");
+    setShowModal(true);
   };
 
   const handleSearch = async (searchTerm: string) => {
@@ -42,30 +49,37 @@ const Members = () => {
 
   useEffect(() => {
     setLoading(true);
-    getMembers()
-      .then((res: any) => {
-        setMembers(res.data);
-        setLoading(false);
+    Promise.all([getMembers(), getPricelist()])
+      .then((res: any[]) => {
+        setMembers(res[0].data);
+        setPricelist(res[1].data);
       })
       .finally(() => setLoading(false));
   }, [getMembers]);
 
   return (
-    <MembersTable
-      title="Members"
-      loading={loading}
-      onAdd={handleAdd}
-      onSearch={handleSearch}
-    >
-      {members.map((m) => (
-        <MembersTableRow
-          key={m.id}
-          {...m}
-          onView={handleView}
-          onDelete={handleDelete}
-        />
-      ))}
-    </MembersTable>
+    <>
+      <MembersTable
+        title="Members"
+        loading={loading}
+        onAdd={handleAdd}
+        onSearch={handleSearch}
+      >
+        {members.map((m) => (
+          <MembersTableRow
+            key={m.id}
+            {...m}
+            onView={handleView}
+            onDelete={handleDelete}
+          />
+        ))}
+      </MembersTable>
+      <NewMemberModal
+        pricelist={pricelist}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      />
+    </>
   );
 };
 
