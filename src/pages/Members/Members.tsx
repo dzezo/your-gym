@@ -12,7 +12,8 @@ import MembersTableRow from "components/MembersTable/MembersTableRow";
 import NewMemberModal from "components/MembersTable/NewMemberModal";
 
 const Members = () => {
-  const { getMembers, searchByName, deleteMember } = useMembersActions();
+  const { getMembers, searchByName, deleteMember, addNewMember } =
+    useMembersActions();
   const { getPricelist } = usePricelistActions();
 
   const [loading, setLoading] = useState(false);
@@ -21,8 +22,16 @@ const Members = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleAdd = () => {
-    setShowModal(true);
+  const handleAdd = (data: any, callback: Function) => {
+    addNewMember(data)
+      .then((res) => {
+        const newMember = res.data.member;
+        setMembers([newMember, ...members]);
+      })
+      .finally(() => {
+        callback();
+        setShowModal(false);
+      });
   };
 
   const handleSearch = async (searchTerm: string) => {
@@ -62,7 +71,7 @@ const Members = () => {
       <MembersTable
         title="Members"
         loading={loading}
-        onAdd={handleAdd}
+        onAdd={() => setShowModal(true)}
         onSearch={handleSearch}
       >
         {members.map((m) => (
@@ -78,6 +87,7 @@ const Members = () => {
         pricelist={pricelist}
         show={showModal}
         onHide={() => setShowModal(false)}
+        onConfirm={handleAdd}
       />
     </>
   );

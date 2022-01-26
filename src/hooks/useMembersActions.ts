@@ -50,12 +50,12 @@ export function useMembersActions() {
     [baseUrl, user]
   );
 
-  // addNewMember(userId, newMember){
-  //   var headers = new Headers();
-  //   headers.append('Content-Type', 'application/json');
-  //   return this.http.post('members/' + userId, JSON.stringify(newMember), {headers: headers})
-  //     .map(res => res.json());
-  // }
+  const addNewMember = useCallback(
+    async (data: any) => {
+      return axios.post(`${baseUrl}/${user?.id}`, data);
+    },
+    [baseUrl, user]
+  );
 
   const getMember = useCallback(
     async (memberId: string) => {
@@ -102,6 +102,7 @@ export function useMembersActions() {
     searchByName,
     deleteMember,
     getMember,
+    addNewMember,
     error,
     setError,
   };

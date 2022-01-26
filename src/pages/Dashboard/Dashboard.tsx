@@ -28,7 +28,8 @@ const defaultDashboardStats: DashboardStats = {
 };
 
 const Dashboard = () => {
-  const { getDashboard, searchByName, deleteMember } = useMembersActions();
+  const { getDashboard, searchByName, deleteMember, addNewMember } =
+    useMembersActions();
   const { getPricelist } = usePricelistActions();
 
   const [loading, setLoading] = useState(false);
@@ -52,8 +53,13 @@ const Dashboard = () => {
       .finally(() => setLoading(false));
   }, [getDashboard]);
 
-  const handleAdd = () => {
-    setShowModal(true);
+  const handleAdd = (data: any, callback: Function) => {
+    addNewMember(data)
+      .then((res) => {
+        const newMember = res.data.member;
+        setMembers([newMember, ...members]);
+      })
+      .finally(() => callback());
   };
 
   const handleSearch = async (searchTerm: string) => {
@@ -121,7 +127,7 @@ const Dashboard = () => {
       <MembersTable
         title="Active Members"
         loading={loading}
-        onAdd={handleAdd}
+        onAdd={() => setShowModal(true)}
         onSearch={handleSearch}
       >
         {members.map(
@@ -139,6 +145,7 @@ const Dashboard = () => {
         pricelist={pricelist}
         show={showModal}
         onHide={() => setShowModal(false)}
+        onConfirm={handleAdd}
       />
     </>
   );

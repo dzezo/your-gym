@@ -34,7 +34,16 @@ const NewMemberModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
     }),
     onSubmit: async (values) => {
       setLoading(true);
-      console.log(values);
+      if (props.onConfirm) {
+        const data = {
+          ...values,
+          membershipId: values.membership,
+          submitTime: new Date(),
+        };
+        props.onConfirm(data, () => {
+          setLoading(false);
+        });
+      }
     },
     enableReinitialize: true,
   });
