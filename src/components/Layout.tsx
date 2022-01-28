@@ -17,7 +17,10 @@ interface Header {
   icon: JSX.Element;
 }
 
-const Headers: { [key: string]: Header } = {
+/**
+ * Content Banner
+ */
+const Headers: Record<string, Header> = {
   dashboard: {
     title: "Dashboard",
     icon: <FaCog />,

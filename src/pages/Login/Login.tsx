@@ -10,6 +10,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { useUserActions } from "hooks/useUserActions";
+import FormGroup from "components/FormGroup";
+import FormButton from "components/FormButton";
 
 const Login = () => {
   const { login, error, setError } = useUserActions();
@@ -43,55 +45,35 @@ const Login = () => {
           With yourGYM you can track every membership and payment, <br />
           just click onmember`s name to access their profile
         </IntroH5>
-        <LoginButton onClick={() => navigate("/register")}>
+        <StartButton onClick={() => navigate("/register")}>
           Get Started
-        </LoginButton>
+        </StartButton>
       </LoginIntro>
       <LoginForm>
         <Form onSubmit={formik.handleSubmit}>
-          <Form.Group className="mb-3" controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={formik.values.username}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.username && formik.touched.username}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.password && formik.touched.password}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.password}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button type="submit" variant="success" disabled={loading}>
-            {loading && (
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-1"
-              />
-            )}
-            Login
-          </Button>
+          <FormGroup
+            type="text"
+            name="username"
+            label="Username"
+            placeholder="Username"
+            value={formik.values.username}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.username && formik.touched.username}
+            error={formik.errors.username}
+          />
+          <FormGroup
+            type="password"
+            name="password"
+            label="Password"
+            placeholder="Password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.password && formik.touched.password}
+            error={formik.errors.password}
+          />
+          <FormButton type="submit" label="Login" loading={loading} />
         </Form>
       </LoginForm>
       {!!error && (
@@ -171,7 +153,7 @@ const LoginForm = styled.div`
   }
 `;
 
-const LoginButton = styled(Button)`
+const StartButton = styled(Button)`
   padding: 15px 40px;
   text-transform: uppercase;
 `;

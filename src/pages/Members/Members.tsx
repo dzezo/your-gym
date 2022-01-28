@@ -24,7 +24,7 @@ const Members = () => {
 
   const handleAdd = (data: any, callback: Function) => {
     addNewMember(data)
-      .then((res) => {
+      .then((res: any) => {
         const newMember = res.data.member;
         setMembers([newMember, ...members]);
       })

@@ -28,8 +28,13 @@ const defaultDashboardStats: DashboardStats = {
 };
 
 const Dashboard = () => {
-  const { getDashboard, searchByName, deleteMember, addNewMember } =
-    useMembersActions();
+  const {
+    getDashboard,
+    searchByName,
+    deleteMember,
+    addNewMember,
+    abortController,
+  } = useMembersActions();
   const { getPricelist } = usePricelistActions();
 
   const [loading, setLoading] = useState(false);
@@ -50,16 +55,27 @@ const Dashboard = () => {
         const pricelist = res[1];
         setPricelist(pricelist.data);
       })
+      .catch((e) => console.error(e))
       .finally(() => setLoading(false));
+
+    return () => {
+      abortController.abort();
+    };
   }, [getDashboard]);
 
   const handleAdd = (data: any, callback: Function) => {
-    addNewMember(data)
-      .then((res) => {
-        const newMember = res.data.member;
+    addNewMember(data, true)
+      .then((res: any) => {
+        const [{ data }, stats] = res;
+        const newMember = data.member;
+
         setMembers([newMember, ...members]);
+        setStats(stats.data);
       })
-      .finally(() => callback());
+      .finally(() => {
+        callback();
+        setShowModal(false);
+      });
   };
 
   const handleSearch = async (searchTerm: string) => {

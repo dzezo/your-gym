@@ -8,11 +8,16 @@ export function useMembersActions() {
   const baseUrl = `${process.env.REACT_APP_API_URL}/members`;
   const user = useRecoilValue(authAtom);
   const [error, setError] = useErrorHandler();
+  const abortController = new AbortController();
 
   const getDashboard = useCallback(async () => {
     return axios.all([
-      axios.get(`${baseUrl}/active/${user?.id}`),
-      axios.get(`${baseUrl}/${user?.id}/statistics`),
+      axios.get(`${baseUrl}/active/${user?.id}`, {
+        signal: abortController.signal,
+      }),
+      axios.get(`${baseUrl}/${user?.id}/statistics`, {
+        signal: abortController.signal,
+      }),
     ]);
   }, [baseUrl, user]);
 
@@ -51,8 +56,14 @@ export function useMembersActions() {
   );
 
   const addNewMember = useCallback(
-    async (data: any) => {
-      return axios.post(`${baseUrl}/${user?.id}`, data);
+    async (data: any, withStats?: boolean) => {
+      if (withStats) {
+        const newMember = await axios.post(`${baseUrl}/${user?.id}`, data);
+        const stats = await axios.get(`${baseUrl}/${user?.id}/statistics`);
+        return [newMember, stats];
+      } else {
+        return axios.post(`${baseUrl}/${user?.id}`, data);
+      }
     },
     [baseUrl, user]
   );
@@ -103,6 +114,7 @@ export function useMembersActions() {
     deleteMember,
     getMember,
     addNewMember,
+    abortController,
     error,
     setError,
   };
