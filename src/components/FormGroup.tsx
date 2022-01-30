@@ -5,8 +5,8 @@ interface IFormGroup {
   type: string;
   name: string;
   label: string;
-  placeholder: string;
-  value: any;
+  placeholder?: string;
+  value?: any;
   onChange: ChangeEventHandler<any>;
   onBlur: FocusEventHandler<any>;
   isInvalid: boolean | undefined;

@@ -2,12 +2,13 @@ import { FC, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { IPricelist } from "interfaces/pricelist.interface";
 import { IModalProps } from "interfaces/modal-props.interface";
+import FormGroup from "components/FormGroup";
+import FormButton from "components/FormButton";
 
 export type PricelistModalType = "new" | "edit";
 
@@ -49,69 +50,45 @@ const PricelistModal: FC<IPricelistModalProps> = (props) => {
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Membership Name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.name && formik.touched.name}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="username">
-            <Form.Label>Length</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Length In Days"
-              name="length"
-              value={formik.values.length}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.length && formik.touched.length}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.length}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="cost">
-            <Form.Label>Cost</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Cost"
-              name="cost"
-              value={formik.values.cost}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.cost && formik.touched.cost}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.cost}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <FormGroup
+            type="text"
+            name="name"
+            label="Name"
+            placeholder="Membership Name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.name && formik.touched.name}
+            error={formik.errors.name}
+          />
+          <FormGroup
+            type="number"
+            name="length"
+            label="Length"
+            placeholder="Length In Days"
+            value={formik.values.length}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.length && formik.touched.length}
+            error={formik.errors.length}
+          />
+          <FormGroup
+            type="number"
+            name="cost"
+            label="Cost"
+            placeholder="0"
+            value={formik.values.cost}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.cost && formik.touched.cost}
+            error={formik.errors.cost}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" disabled={loading} onClick={props.onHide}>
             Close
           </Button>
-          <Button type="submit" variant="success" disabled={loading}>
-            {loading && (
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-1"
-              />
-            )}
-            {props.type === "new" ? "Submit Item" : "Submit Changes"}
-          </Button>
+          <FormButton type="submit" label="Submit" loading={loading} />
         </Modal.Footer>
       </Form>
     </Modal>

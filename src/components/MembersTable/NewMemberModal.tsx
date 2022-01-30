@@ -1,12 +1,14 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
 import { IModalProps } from "interfaces/modal-props.interface";
 import { IPricelist } from "interfaces/pricelist.interface";
+import FormGroup from "components/FormGroup";
+import FormButton from "components/FormButton";
 
 const NewMemberModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
   props
@@ -65,51 +67,40 @@ const NewMemberModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Full Name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.name && formik.touched.name}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="phone">
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Phone Number"
-              name="phone"
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.phone && formik.touched.phone}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.phone}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>E-mail</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="E-mail"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.email && formik.touched.email}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <FormGroup
+            type="text"
+            name="name"
+            label="Name"
+            placeholder="Full Name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.name && formik.touched.name}
+            error={formik.errors.name}
+          />
+          <FormGroup
+            type="text"
+            name="phone"
+            label="Phone"
+            placeholder="Phone Number"
+            value={formik.values.phone}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.phone && formik.touched.phone}
+            error={formik.errors.phone}
+          />
+          <FormGroup
+            type="text"
+            name="email"
+            label="E-mail"
+            placeholder="E-mail"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.email && formik.touched.email}
+            error={formik.errors.email}
+          />
+
           <Form.Group className="mb-3" controlId="membership">
             <Form.Label>Membership Type</Form.Label>
             <Form.Select
@@ -132,68 +123,45 @@ const NewMemberModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
               {formik.errors.membership}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="mb-3" controlId="date">
-            <Form.Label>Start Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="start"
-              value={formik.values.start}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.start && formik.touched.start}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.start}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="cost">
-            <Form.Label>Membership Cost</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="0"
-              name="cost"
-              value={formik.values.cost}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.cost && formik.touched.cost}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.cost}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="amount">
-            <Form.Label>Amount Paid</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="0"
-              name="amount"
-              value={formik.values.amount}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.amount && formik.touched.amount}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.amount}
-            </Form.Control.Feedback>
-          </Form.Group>
+
+          <FormGroup
+            type="date"
+            name="start"
+            label="Start Date"
+            value={formik.values.start}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.start && formik.touched.start}
+            error={formik.errors.start}
+          />
+          <FormGroup
+            type="number"
+            name="cost"
+            label="Membership Cost"
+            placeholder="0"
+            value={formik.values.cost}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.cost && formik.touched.cost}
+            error={formik.errors.cost}
+          />
+          <FormGroup
+            type="number"
+            name="amount"
+            label="Amount Paid"
+            placeholder="0"
+            value={formik.values.amount}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.amount && formik.touched.amount}
+            error={formik.errors.amount}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" disabled={loading} onClick={props.onHide}>
             Close
           </Button>
-          <Button type="submit" variant="success" disabled={loading}>
-            {loading && (
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-1"
-              />
-            )}
-            Submit
-          </Button>
+          <FormButton type="submit" label="Submit" loading={loading} />
         </Modal.Footer>
       </Form>
     </Modal>

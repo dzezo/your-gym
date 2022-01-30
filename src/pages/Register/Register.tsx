@@ -1,8 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
 import ToastContainer from "react-bootstrap/ToastContainer";
 import Toast from "react-bootstrap/Toast";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +9,8 @@ import * as Yup from "yup";
 
 import { useUserActions } from "hooks/useUserActions";
 import Link from "components/Link";
+import FormGroup from "components/FormGroup";
+import FormButton from "components/FormButton";
 
 const Register = () => {
   const { register, error, setError } = useUserActions();
@@ -44,89 +44,57 @@ const Register = () => {
     <RegisterWrapper>
       <FormWrapper>
         <Form onSubmit={formik.handleSubmit}>
-          <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Name"
-              name="name"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.name && formik.touched.name}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Username"
-              name="username"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.username && formik.touched.username}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>E-mail</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="E-mail"
-              name="email"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.email && formik.touched.email}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              name="password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.password && formik.touched.password}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.password}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              name="password2"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.password2 && formik.touched.password2}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.password2}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button type="submit" variant="success" disabled={loading}>
-            {loading && (
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-1"
-              />
-            )}
-            Register
-          </Button>
+          <FormGroup
+            type="text"
+            name="name"
+            label="Name"
+            placeholder="Name"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.name && formik.touched.name}
+            error={formik.errors.name}
+          />
+          <FormGroup
+            type="text"
+            name="username"
+            label="Username"
+            placeholder="Username"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.username && formik.touched.username}
+            error={formik.errors.username}
+          />
+          <FormGroup
+            type="email"
+            name="email"
+            label="E-mail"
+            placeholder="E-mail"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.email && formik.touched.email}
+            error={formik.errors.email}
+          />
+          <FormGroup
+            type="password"
+            name="password"
+            label="Password"
+            placeholder="Password"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.password && formik.touched.password}
+            error={formik.errors.password}
+          />
+          <FormGroup
+            type="password"
+            name="password2"
+            label="Confirm Password"
+            placeholder="Password"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.password2 && formik.touched.password2}
+            error={formik.errors.password2}
+          />
+          <FormButton type="submit" label="Register" loading={loading} />
           <div>
             <span className="me-1">Already a member?</span>
             <Link label="Sign in" onClick={() => navigate("/")} />

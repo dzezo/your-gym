@@ -1,12 +1,13 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IMemberDetails } from "interfaces/member.interface";
 import { IModalProps } from "interfaces/modal-props.interface";
+import FormGroup from "components/FormGroup";
+import FormButton from "components/FormButton";
 
 const EditMemberModal: FC<IMemberDetails & IModalProps> = (props) => {
   const [loading, setLoading] = useState(false);
@@ -34,69 +35,45 @@ const EditMemberModal: FC<IMemberDetails & IModalProps> = (props) => {
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Full Name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.name && formik.touched.name}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="phone">
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Phone Number"
-              name="phone"
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.phone && formik.touched.phone}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.phone}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>E-mail</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="E-mail"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={!!formik.errors.email && formik.touched.email}
-            ></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <FormGroup
+            type="text"
+            name="name"
+            label="Name"
+            placeholder="Full Name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.name && formik.touched.name}
+            error={formik.errors.name}
+          />
+          <FormGroup
+            type="text"
+            name="phone"
+            label="Phone"
+            placeholder="Phone Number"
+            value={formik.values.phone}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.phone && formik.touched.phone}
+            error={formik.errors.phone}
+          />
+          <FormGroup
+            type="email"
+            name="email"
+            label="E-mail"
+            placeholder="E-mail"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.email && formik.touched.email}
+            error={formik.errors.email}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" disabled={loading} onClick={props.onHide}>
             Close
           </Button>
-          <Button type="submit" variant="success" disabled={loading}>
-            {loading && (
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-1"
-              />
-            )}
-            Submit
-          </Button>
+          <FormButton type="submit" label="Login" loading={loading} />
         </Modal.Footer>
       </Form>
     </Modal>
