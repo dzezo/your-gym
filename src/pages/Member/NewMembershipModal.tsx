@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { IModalProps } from "interfaces/modal-props.interface";
 import { IPricelist } from "interfaces/pricelist.interface";
 import FormGroup from "components/FormGroup";
+import FormSelect from "components/FormSelect";
 import FormButton from "components/FormButton";
 
 const NewMembershipModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
@@ -52,29 +53,19 @@ const NewMembershipModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="membership">
-            <Form.Label>Membership Type</Form.Label>
-            <Form.Select
-              name="membership"
-              value={formik.values.membership}
-              onChange={handleSelectChange}
-              onBlur={formik.handleBlur}
-              isInvalid={
-                !!formik.errors.membership && formik.touched.membership
-              }
-            >
-              <option>Select Membership</option>
-              {props.pricelist.map((membership) => (
-                <option key={membership._id} value={membership._id}>
-                  {membership.name}
-                </option>
-              ))}
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.membership}
-            </Form.Control.Feedback>
-          </Form.Group>
-
+          <FormSelect
+            name="membership"
+            label="Membership Type"
+            value={formik.values.membership}
+            onChange={handleSelectChange}
+            onBlur={formik.handleBlur}
+            isInvalid={!!formik.errors.membership && formik.touched.membership}
+            error={formik.errors.membership}
+            options={props.pricelist}
+            optionsValue="_id"
+            optionsLabel="name"
+            optionsPlaceholder="Select Membership"
+          />
           <FormGroup
             type="date"
             name="start"
