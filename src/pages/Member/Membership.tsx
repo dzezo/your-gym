@@ -2,13 +2,44 @@ import { FC, useState } from "react";
 import styled from "styled-components";
 import { FaTrash, FaTag, FaCalendar, FaExchangeAlt } from "react-icons/fa";
 import { Row, Col } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 
 import Box from "components/Box";
 import { getDateString } from "helpers/utils";
 import { IMembership } from "interfaces/member.interface";
 
-const Membership: FC<IMembership & { showModal: () => void }> = (props) => {
+interface IMembershipActions {
+  showModal: () => void;
+  onDeleteMembership: (membershipId: string, callback: Function) => void;
+  onDeletePayment: (
+    membershipId: string,
+    paymentId: string,
+    callback: Function
+  ) => void;
+}
+
+const Membership: FC<IMembership & IMembershipActions> = (props) => {
   const [showMore, setShowMore] = useState(false);
+  const [deletingMembership, setDeletingMembership] = useState(false);
+  const [deletingPayment, setDeletingPayment] = useState("");
+
+  const handleMembershipDeletion = () => {
+    if (deletingMembership || deletingPayment) return;
+
+    setDeletingMembership(true);
+    props.onDeleteMembership(props._id, () => {
+      setDeletingMembership(false);
+    });
+  };
+
+  const handlePaymentDeletion = (paymentId: string) => {
+    if (deletingPayment || deletingMembership) return;
+
+    setDeletingPayment(paymentId);
+    props.onDeletePayment(props._id, paymentId, () => {
+      setDeletingPayment("");
+    });
+  };
 
   return (
     <>
@@ -17,13 +48,24 @@ const Membership: FC<IMembership & { showModal: () => void }> = (props) => {
           <MembershipHeading onClick={() => setShowMore(!showMore)}>
             {props.mName} | DAYS LEFT: {props.daysLeft} | DEBT: {props.debt}
           </MembershipHeading>
-          <MembershipAction onClick={props.showModal}>
-            <span>Pay</span>
-            <FaTag />
-          </MembershipAction>
-          <MembershipAction className="danger">
-            <FaTrash />
-          </MembershipAction>
+          {deletingMembership ? (
+            <MembershipSpinner>
+              <Spinner animation="border" size="sm" />
+            </MembershipSpinner>
+          ) : (
+            <>
+              <MembershipAction onClick={props.showModal}>
+                <span>Pay</span>
+                <FaTag />
+              </MembershipAction>
+              <MembershipAction
+                className="danger"
+                onClick={handleMembershipDeletion}
+              >
+                <FaTrash />
+              </MembershipAction>
+            </>
+          )}
         </MembershipHeader>
         {showMore && (
           <MembershipBody>
@@ -51,9 +93,17 @@ const Membership: FC<IMembership & { showModal: () => void }> = (props) => {
                   <div>Date: {getDateString(payment.date)}</div>
                   <div>Amount: {payment.amount}</div>
                 </PaymentData>
-                <PaymentAction>
-                  <FaTrash />
-                </PaymentAction>
+                {payment._id === deletingPayment ? (
+                  <PaymentSpinner>
+                    <Spinner animation="border" size="sm" />
+                  </PaymentSpinner>
+                ) : (
+                  <PaymentAction
+                    onClick={() => handlePaymentDeletion(payment._id)}
+                  >
+                    <FaTrash />
+                  </PaymentAction>
+                )}
               </MembershipPayment>
             ))}
           </MembershipBody>
@@ -90,6 +140,14 @@ const MembershipHeading = styled.div`
     background-color: var(--color-blue);
     color: var(--color-light-blue);
   }
+`;
+
+const MembershipSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  min-width: 100px;
 `;
 
 const MembershipAction = styled.div`
@@ -144,6 +202,12 @@ const MembershipPayment = styled.div`
 
 const PaymentData = styled.div`
   font-size: 0.9rem;
+`;
+
+const PaymentSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const PaymentAction = styled.div`

@@ -24,6 +24,11 @@ const EditMemberModal: FC<IMemberDetails & IModalProps> = (props) => {
     }),
     onSubmit: async (values) => {
       setLoading(true);
+      if (props.onConfirm) {
+        props.onConfirm(values, () => {
+          setLoading(false);
+        });
+      }
     },
     enableReinitialize: true,
   });

@@ -30,8 +30,18 @@ const NewMembershipModal: FC<IModalProps & { pricelist: IPricelist[] }> = (
       amount: Yup.number().required(),
     }),
     onSubmit: async (values) => {
+      const data = {
+        ...values,
+        membershipId: values.membership,
+        submitTime: new Date(),
+      };
+
       setLoading(true);
-      console.log(values);
+      if (props.onConfirm) {
+        props.onConfirm(data, () => {
+          setLoading(false);
+        });
+      }
     },
     enableReinitialize: true,
   });

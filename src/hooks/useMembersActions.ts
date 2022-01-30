@@ -75,36 +75,47 @@ export function useMembersActions() {
     [baseUrl]
   );
 
-  // updateMember(memberId, update){
-  //   var headers = new Headers();
-  //   headers.append('Content-Type', 'application/json');
-  //   return this.http.put('members/member/' + memberId, JSON.stringify(update), {headers: headers})
-  //     .map(res => res.json());
-  // }
+  const updateMember = useCallback(
+    async (memberId: string, update: any) => {
+      return axios.put(`${baseUrl}/member/${memberId}`, update);
+    },
+    [baseUrl]
+  );
 
-  // addNewMembership(memberId, membership){
-  //   var headers = new Headers();
-  //   headers.append('Content-Type', 'application/json');
-  //   return this.http.post('members/member/' + memberId, JSON.stringify(membership), {headers: headers})
-  //     .map(res => res.json());
-  // }
+  const addNewMembership = useCallback(
+    async (memberId: string, membership: any) => {
+      return axios.post(`${baseUrl}/member/${memberId}`, membership);
+    },
+    [baseUrl]
+  );
 
-  // removeMembership(memberId, membershipId){
-  //   return this.http.delete('members/member/' + memberId + '/membership/' + membershipId)
-  //     .map(res => res.json());
-  // }
+  const removeMembership = useCallback(
+    async (memberId: string, membershipId: string) => {
+      return axios.delete(
+        `${baseUrl}/member/${memberId}/membership/${membershipId}`
+      );
+    },
+    [baseUrl]
+  );
 
-  // addPayment(memberId, membershipId, payment){
-  //   var headers = new Headers();
-  //   headers.append('Content-Type', 'application/json');
-  //   return this.http.post('members/member/' + memberId + '/membership/' + membershipId, JSON.stringify(payment), {headers: headers})
-  //     .map(res => res.json());
-  // }
+  const addPayment = useCallback(
+    async (memberId: string, membershipId: string, payment: any) => {
+      return axios.post(
+        `${baseUrl}/member/${memberId}/membership/${membershipId}`,
+        payment
+      );
+    },
+    [baseUrl]
+  );
 
-  // removePayment(memberId, membershipId, paymentId){
-  //   return this.http.delete('members/member/' + memberId + '/membership/' + membershipId + '/payment/' + paymentId)
-  //     .map(res => res.json());
-  // }
+  const removePayment = useCallback(
+    async (memberId: string, membershipId: string, paymentId: string) => {
+      return axios.delete(
+        `${baseUrl}/member/${memberId}/membership/${membershipId}/payment/${paymentId}`
+      );
+    },
+    [baseUrl]
+  );
 
   return {
     getDashboard,
@@ -114,6 +125,11 @@ export function useMembersActions() {
     deleteMember,
     getMember,
     addNewMember,
+    updateMember,
+    addPayment,
+    removePayment,
+    addNewMembership,
+    removeMembership,
     abortController,
     error,
     setError,

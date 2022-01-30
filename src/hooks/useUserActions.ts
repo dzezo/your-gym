@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { authAtom } from "recoil/authAtom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,8 +7,8 @@ import useErrorHandler from "./useErrorHandler";
 
 export function useUserActions() {
   const baseUrl = `${process.env.REACT_APP_API_URL}/users`;
-  const [auth, setAuth] = useRecoilState(authAtom);
   const [error, setError] = useErrorHandler();
+  const setAuth = useSetRecoilState(authAtom);
   const navigate = useNavigate();
 
   const login = useCallback(

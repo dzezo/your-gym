@@ -25,6 +25,7 @@ interface IModalState {
   showEditMember: boolean;
   showNewMembership: boolean;
   showNewPayment: boolean;
+  payload?: any;
 }
 
 const defaultModalState = {
@@ -40,7 +41,7 @@ type ActionType =
 
 const modalHandler = (
   modalState: IModalState,
-  action: { type: ActionType }
+  action: { type: ActionType; payload?: any }
 ) => {
   switch (action.type) {
     case "TOGGLE_EDIT_MEMBER":
@@ -52,6 +53,7 @@ const modalHandler = (
       return {
         ...modalState,
         showNewPayment: !modalState.showNewPayment,
+        payload: action.payload,
       };
     case "TOGGLE_NEW_MEMBERSHIP":
       return {
@@ -64,7 +66,14 @@ const modalHandler = (
 };
 
 const Member = () => {
-  const { getMember } = useMembersActions();
+  const {
+    getMember,
+    updateMember,
+    addPayment,
+    addNewMembership,
+    removeMembership,
+    removePayment,
+  } = useMembersActions();
   const { getPricelist } = usePricelistActions();
   const [member, setMember] = useState<IMemberDetails>(defaultMember);
   const [pricelist, setPricelist] = useState<IPricelist[]>([]);
@@ -88,6 +97,64 @@ const Member = () => {
         .finally(() => setLoading(false));
     }
   }, []);
+
+  const handleMemberEdit = (update: any, callback: Function) => {
+    updateMember(member._id, update)
+      .then((res: any) => {
+        const { data } = res;
+        setMember(data.member);
+      })
+      .finally(() => {
+        callback();
+        setModalState({ type: "TOGGLE_EDIT_MEMBER" });
+      });
+  };
+
+  const handleNewMembership = (membership: any, callback: Function) => {
+    addNewMembership(member._id, membership)
+      .then((res: any) => {
+        const { data } = res;
+        setMember(data.member);
+      })
+      .finally(() => {
+        callback();
+        setModalState({ type: "TOGGLE_NEW_MEMBERSHIP" });
+      });
+  };
+
+  const handleNewPayment = (payment: any, callback: Function) => {
+    addPayment(member._id, modalState.payload, payment)
+      .then((res: any) => {
+        const { data } = res;
+        setMember(data.member);
+      })
+      .finally(() => {
+        callback();
+        setModalState({ type: "TOGGLE_NEW_PAYMENT" });
+      });
+  };
+
+  const handleMembershipDelete = (membershipId: string, callback: Function) => {
+    removeMembership(member._id, membershipId)
+      .then((res: any) => {
+        const { data } = res;
+        setMember(data.member);
+      })
+      .catch(() => callback());
+  };
+
+  const handlePaymentDelete = (
+    membershipId: string,
+    paymentId: string,
+    callback: Function
+  ) => {
+    removePayment(member._id, membershipId, paymentId)
+      .then((res: any) => {
+        const { data } = res;
+        setMember(data.member);
+      })
+      .catch(() => callback());
+  };
 
   return (
     <>
@@ -145,14 +212,25 @@ const Member = () => {
             <SpinnerWrapper>
               <Spinner animation="grow" />
             </SpinnerWrapper>
-          ) : (
+          ) : member.memberships.length > 0 ? (
             member.memberships.map((membership) => (
               <Membership
                 key={membership._id}
                 {...membership}
-                showModal={() => setModalState({ type: "TOGGLE_NEW_PAYMENT" })}
+                showModal={() =>
+                  setModalState({
+                    type: "TOGGLE_NEW_PAYMENT",
+                    payload: membership._id,
+                  })
+                }
+                onDeleteMembership={handleMembershipDelete}
+                onDeletePayment={handlePaymentDelete}
               />
             ))
+          ) : (
+            <NoMemberships>
+              <h4>User has no memberships</h4>
+            </NoMemberships>
           )}
         </Card.Body>
       </Card>
@@ -160,15 +238,18 @@ const Member = () => {
         {...member}
         show={modalState.showEditMember}
         onHide={() => setModalState({ type: "TOGGLE_EDIT_MEMBER" })}
+        onConfirm={handleMemberEdit}
       />
       <NewMembershipModal
         pricelist={pricelist}
         show={modalState.showNewMembership}
         onHide={() => setModalState({ type: "TOGGLE_NEW_MEMBERSHIP" })}
+        onConfirm={handleNewMembership}
       />
       <NewPaymentModal
         show={modalState.showNewPayment}
         onHide={() => setModalState({ type: "TOGGLE_NEW_PAYMENT" })}
+        onConfirm={handleNewPayment}
       />
     </>
   );
@@ -199,4 +280,11 @@ const SpinnerWrapper = styled.div`
   align-items: center;
   justify-content: center;
   margin: 50px 0;
+`;
+
+const NoMemberships = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 `;
