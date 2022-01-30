@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import Container from "react-bootstrap/Container";

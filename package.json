@@ -1,5 +1,4 @@
 {
-  "homepage": "https://dzezo.github.io/your-gym",
   "name": "your-gym",
   "version": "0.1.0",
   "private": true,
@@ -27,8 +26,6 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -53,7 +50,6 @@
     ]
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.20",
-    "gh-pages": "^3.2.3"
+    "@types/styled-components": "^5.1.20"
   }
 }
