@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 
 import Login from "./pages/Login/Login";
@@ -13,6 +13,21 @@ const Member = lazy(() => import("./pages/Member/Member"));
 const Pricelist = lazy(() => import("./pages/Pricelist/Pricelist"));
 
 function App() {
+  const isRobot = (): boolean => {
+    var botPattern = new RegExp(/bot|crawler|spider|crawling/i, "i");
+    var userAgent = navigator.userAgent;
+
+    return botPattern.test(userAgent);
+  };
+
+  useEffect(() => {
+    if (isRobot()) {
+      console.log(`This is a bot: ${navigator.userAgent}`);
+    } else {
+      console.log(`Not a bot: ${navigator.userAgent}`);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
